@@ -41,12 +41,12 @@ print(f"{part1_total=:,}")  # 4,122,618,559,853
 
 
 def can_solve2(total: int, values: list[int], other: list[int]) -> bool:
-    res = {total}
-    for v in values[::-1]:
+    res = {values[0]}
+    for v in values[1:]:
         res = (
-            {n for r in res if (n := r - v) >= 0}
-            | {n for r in res if r%v == 0 and (n := r // v) >= 0}
-            | {int(str(r).removesuffix(str(v))) for r in res if str(r).endswith(str(v)) }
+            {n for r in res if (n := r + v) <= total}
+            | {n for r in res if (n := r * v) <= total}
+            | {n for r in res if (n := int(str(r) + str(v))) <= total}
         )
     return total in res
 
