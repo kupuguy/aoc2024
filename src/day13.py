@@ -1,7 +1,6 @@
 from pathlib import Path
 import re
 from typing import Sequence
-from math import gcd
 
 
 TEST = """Button A: X+94, Y+34
@@ -61,27 +60,23 @@ ERROR = 10_000_000_000_000
 
 
 def solve_2(
-    a: tuple[int, int], b: tuple[int, int], prize: [int, int], error: int = ERROR
+    a: tuple[int, int], b: tuple[int, int], prize: [int, int], error: int
 ) -> int:
     a_x, a_y = a
     b_x, b_y = b
     prize_x, prize_y = prize[0] + error, prize[1] + error
 
-    if prize_x % gcd(a_x, b_x) != 0 or prize_y % gcd(a_y, b_y) != 0:
-        return 0  # no solutions
-
     num = a_x * b_x * prize_y - a_y * b_x * prize_x
     denom = a_x * b_y - a_y * b_x
-    if num % denom != 0 or (num // denom) % b_x != 0:
-        return 0
     x_intersect = num // denom
     press_b = x_intersect // b_x
-    if (prize_x - x_intersect) % a_x != 0:
-        return 0
     press_a = (prize_x - x_intersect) // a_x
-    assert a_y * press_a + b_y * press_b == prize_y
-    assert a_x * press_a + b_x * press_b == prize_x
-    if press_a >= 0 and press_b >= 0:
+    if (
+        press_a >= 0
+        and press_b >= 0
+        and a_y * press_a + b_y * press_b == prize_y
+        and a_x * press_a + b_x * press_b == prize_x
+    ):
         return press_b + 3 * press_a
     return 0
 
@@ -90,5 +85,5 @@ def part2(input: str, error: int = ERROR) -> int:
     return sum(solve_2(a, b, prize, error=error) for a, b, prize in parse(input))
 
 
-print(f"{part2(INPUT, error=0)=:,}")
-print(f"{part2(INPUT)=:,}")  # 83,551,068,361,379
+print(f"Part 1: {part2(INPUT, error=0):,}") # 34,393
+print(f"Part 2: {part2(INPUT):,}")  # 83,551,068,361,379
